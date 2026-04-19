@@ -21,7 +21,7 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter")
     implementation("com.google.code.gson:gson:2.13.0")
     implementation("club.minnced:discord-webhooks:0.8.4")
-    implementation("com.github.twitch4j:twitch4j:1.10.0")
+    implementation("com.github.twitch4j:twitch4j:1.26.0")
 
     testImplementation("org.springframework.boot:spring-boot-starter-test")
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
