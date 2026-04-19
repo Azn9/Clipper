@@ -15,8 +15,6 @@ import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.CompletableFuture;
@@ -64,7 +62,7 @@ public class TokenRefreshService {
         return this.client.sendAsync(request, HttpResponse.BodyHandlers.ofString())
                 .thenApply(response -> {
                     String data = response.body();
-                    TokenRefreshService.LOGGER.info("Received data: {}", data);
+                    TokenRefreshService.LOGGER.debug("Received data: {}", data);
                     return TokenRefreshService.GSON.fromJson(data, RefreshTokenResponse.class);
                 })
                 .thenCompose(tokenResponse -> {
@@ -118,7 +116,7 @@ public class TokenRefreshService {
                 .thenApply(response -> {
                     String data = response.body();
 
-                    TokenRefreshService.LOGGER.info("Received data: {}", data);
+                    TokenRefreshService.LOGGER.debug("Received data: {}", data);
 
                     return TokenRefreshService.GSON.fromJson(data, RefreshTokenResponse.class);
                 })
@@ -143,7 +141,7 @@ public class TokenRefreshService {
                             this.configuration.setRefreshToken(newRefreshToken);
 
                             try {
-                                Files.writeString(Path.of("config.json"), TokenRefreshService.GSON.toJson(this.configuration));
+                                this.configuration.save();
                             } catch (Exception e) {
                                 TokenRefreshService.LOGGER.error(e);
                                 return this.webhookService.sendError("Impossible de raffraichir le token : `" + e.getMessage() + "`")
