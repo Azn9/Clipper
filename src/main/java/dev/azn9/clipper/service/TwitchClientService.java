@@ -97,7 +97,9 @@ public class TwitchClientService {
                     return;
                 }
 
-                this.createClip()
+                String title = message.substring("!clip".length()).trim();
+
+                this.createClip(title)
                         .thenCompose(createClips -> {
                             List<CompletableFuture<ReadonlyMessage>> futures = new ArrayList<>();
 
@@ -181,15 +183,20 @@ public class TwitchClientService {
         this.startBot();
     }
 
-    public CompletableFuture<List<CreateClip>> createClip() {
+    public CompletableFuture<List<CreateClip>> createClip(String title) {
         if (this.twitchClient == null) {
             TwitchClientService.LOGGER.error("Clip creation failed: Twitch client is null!");
             return CompletableFuture.supplyAsync(List::of);
         }
 
+        if (title.isEmpty()) {
+            title = null;
+        }
+
+        String finalTitle = title;
         return CompletableFuture.supplyAsync(() -> {
             return this.twitchClient.getHelix()
-                    .createClip(this.configuration.getAccessToken(), this.configuration.getStreamerId(), true)
+                    .createClip(this.configuration.getAccessToken(), this.configuration.getStreamerId(), finalTitle, null)
                     .execute();
         }).thenApply(CreateClipList::getData);
     }
